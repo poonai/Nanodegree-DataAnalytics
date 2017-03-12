@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Project 1</title>
+  </head>
+  <body>
+    <h3>1)What is our independent variable? What is our dependent variable?</h3>
+    <p>time taken to say the color is dependent and the congurent and incongurent will be independent</p>
+    <h3>2)a.What is an appropriate set of hypotheses for this task? </h3>
+    <ul>
+      <li>
+      <ol>
+        <li>&mu;C: mean of congurent</li>
+
+        <li>&mu;l: mean of incongurent</li>
+      </ol></li>
+      <li>H0(null hypothesis): &mu;C == &mu;l there is no significant time diffrence on finding color of the word</li>
+      <li>H1(alternative hypothesis): &mu;C<&mu;l the time taken for incongruent is higher than congruent</li>
+    </ul>
+    <h3>2)b.What kind of statistical test do you expect to perform? Justify your choices.</h3>
+    <p>we'll use z test when we having big dataset or a real population but here we having small dataset so we'll be using t test in this task</p>
+    <p>it is a dependent sample so we use paired or dependent t test</p>
+    <h3>3)Report some descriptive statistics regarding this dataset. Include at least one measure of central tendency and at least one measure of variability.</h3>
+    <h4>congurent</h4>
+    <ul>
+      <li>mean:14.05</li>
+      <li>median:14.35</li>
+      <li>mode:14.1092</li>
+      <li>sample standard deviation: 3.55</li>
+      <li>variance:12.14</li>
+      <li>n:24</li>
+    </ul>
+    <h4>incongurent</h4>
+    <ul>
+      <li>mean:22.01</li>
+      <li>median:21.017</li>
+      <li>mode:19.60</li>
+      <li>sample standard deviation:4.79</li>
+      <li>variance:22.05</li>
+      <li>n:24</li>
+    </ul>
+    <h3>4)Provide one or two visualizations that show the distribution of the sample data. Write one or two sentences noting what you observe about the plot or plots.</h3>
+    <img src="congurent.png" alt="congurent">
+    <p>congurent looks like normally distributed and having mean range between 14 to 15</p>
+    <img src="incongurent.png" alt="congurent">
+    <p>incongurent looks like bimodal distribution</p>
+    <h3>5)Now, perform the statistical test and report your results. What is your confidence level and your critical statistic value? Do you reject the null hypothesis or fail to reject it? Come to a conclusion in terms of the experiment task. Did the results match up with your expectations?</h3>
+    <ul>
+      <li>mean diffrence: 7.96</li>
+      <li>d:4.86</li>
+      <li>SE=4.86/<span style="white-space: nowrap; font-size:larger">
+&radic;<span style="text-decoration:overline;">&nbsp;24</span>
+</span>=0.99</li>
+      <li>crtical value at alpha(0.05) is 1.71</li>
+      <li>t stat value is 8.04</li>
+      <li>DF:23</li>
+      <p>p value .00001 (so it is not likely by chance so changing color created huge impact on finding color)</p>
+      <li>t stat value is greater than alpha value</li>
+      <li>there is huge variation between t value and alpha so there is big time diffrence between incongurent and congurent condition</li>
+      <li>reject H0(null hypothesis)</li>
+    </ul>
+
+    <p>ps:kindly review and give me your feedback</p>
+  </body>
+</html>
