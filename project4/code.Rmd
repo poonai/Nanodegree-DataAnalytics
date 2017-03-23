@@ -9,7 +9,7 @@ wineData<-read.csv('projects/nanodegree-datanalytics/project3/wineQualityReds.cs
 library('ggplot2')
 summary(wineData)
 ```
-
+# Univariate
 ```{r, echo=FALSE}
 ggplot(aes(x=quality),data=wineData) + 
   geom_histogram()
@@ -34,7 +34,13 @@ ggplot(aes(x=fixed.acidity),data=wineData)+
   scale_x_continuous(breaks = seq(0,16,by=1))+
   geom_histogram()
 ```
-acidity of wine is bit skewed right
+acidity of wine is bit skewed left show that most of the wine are less acidity
+```{r, echo=FALSE}
+ggplot(aes(x=residual.sugar),data=subset(wineData,wineData$residual.sugar<8)) +
+   geom_histogram()
+```
+most of the wine are less suagary
+# Bivariate analysis
 ```{r, echo=FALSE}
 ggplot(data=wineData,aes(x=density,y=quality)) +
   
@@ -88,6 +94,26 @@ ggplot(wineData,aes(factor(quality),chlorides)) +
   geom_boxplot()
 ```
 most of wine has same level of saltiness except 3 becuase it has a big quadrant 
+
+```{r, echo=FALSE}
+library('ggplot2')
+ggplot(aes(x=total.sulfur.dioxide,y=free.sulfur.dioxide),data=wineData) + 
+   geom_point()
+```
+here we can see that if we have more sulphur which also leads to more free sulphur but in this dataset all the point clouded in the lower point and ti shows that most of wine are less sulfur
+```{r, echo=FALSE}
+ggplot(aes(x=alcohol,y=density),data=wineData) +
+  geom_point() +
+  geom_smooth()
+```
+there is coorelation between density and alcohol hihger the density lower the alcohol content
+```{r, echo=FALSE}
+library('ggplot2')
+ggplot(aes(x=total.sulfur.dioxide,y=free.sulfur.dioxide),data=wineData) + 
+   geom_jitter(alpha=1/2)
+```
+the lowe the sulfur leads to lower the total sulfur but sulphur are clouded in bottom shows that most of the wine are less in sulfur
+# multivariate analysis
 ```{r, echo=FALSE}
 ggplot(aes(x=pH,y=volatile.acidity,color=factor(quality)),data=subset(wineData,wineData$citric.acid < 0.75)) +
   geom_point()
@@ -120,25 +146,55 @@ the wine quality 5 and 6 has high acidity and wide range of density but 3,4,7,8 
 ```
 the above plot show that lesser density has higher alcohol content                                             
 but quality 7 having lesser density abd highr alchol content
-```{r, echo=FALSE}
-ggplot(aes(x=residual.sugar),data=subset(wineData,wineData$residual.sugar<8)) +
-   geom_histogram()
-```
-most of the wine are less suagary
-```{r, echo=FALSE}
-ggplot(aes(x=alcohol,y=density),data=wineData) +
-  geom_point() +
-  geom_smooth()
-```
-there is coorelation between density and alcohol hihger the density lower the alcohol content
-```{r, echo=FALSE}
-library('ggplot2')
-ggplot(aes(x=total.sulfur.dioxide,y=free.sulfur.dioxide),data=wineData) + 
-   geom_jitter(alpha=1/2)
-```
 
-```{r, echo=FALSE}
-library('ggplot2')
+
+
+
+
+```{r}
 ggplot(aes(x=total.sulfur.dioxide,y=free.sulfur.dioxide),data=wineData) + 
-   geom_point()
+   geom_point()+
+  facet_grid(~quality)
 ```
+the streak of length of sulphur is less in lesser quality wine shows that lower quality wine has less in sulfur 
+# Final Plot
+1) ## Count of Quality of Wine
+```{r, echo=FALSE}
+ggplot(aes(x=quality),data=wineData) + 
+  geom_histogram() +
+  labs(title="                                          Count of Quality of Wine")+
+  ylab("count of quality")+
+  xlab("quality of wine") 
+  
+```
+# description
+the plot clearly shows that we don't have sufficent data of all quality only 5 and 6 are in high volume so taking descision we'll 
+be difficult
+2) ## quality on acidiy vs pH
+```{r, echo=FALSE}
+wineData$quality = factor(wineData$quality)
+ggplot(aes(x=pH,y=volatile.acidity,color=quality),data=subset(wineData,wineData$citric.acid < 0.75)) +
+  geom_point() +
+  labs(title = "                                       quality on acidiy vs pH")+
+  ylab("Volatile Acidity")
+```
+# Description 
+we can see that high quality wine has less acidity but pH values is wide spreded this makes me to think the relation between ph and Volatile Acidity so volatile Acidity not affecting the pH value that much
+3) ## citrus level on acidity vs pH
+```{r, echo=FALSE}
+wineData$citricCut=cut(wineData$citric.acid,breaks = seq(-1,2,by=0.30))
+wineData$citrusLevel = factor(wineData$citricCut,labels = c("low","medium","high","very high"))
+ggplot(aes(x=pH,y=fixed.acidity,color=citrusLevel),data=wineData) +
+  geom_jitter(alpha=1/3) +
+  labs(title="                                    citrus level on acidity vs pH")+
+  ylab("Fixed Acidity")
+
+```
+# description
+it clearly shows that high citrus level leads to high acidity and low pH value likewise low citrus values gives low acidity and pH value
+
+# Reflection
+- the dataset for all quality of wine is not sufficient for example 3,4,7,8 has less entries so making decision is quite bit difficult
+- acidity leads to lower the ph value but volatile acidity doesn't actullay affecting the pH value of wine
+- citrus level is main responsible for acidity it also affecting the pH.
+
