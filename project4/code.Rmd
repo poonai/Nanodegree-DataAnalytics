@@ -1,0 +1,146 @@
+---
+title: "wine data"
+output: html_document
+---
+
+```{r}
+
+wineData<-read.csv('projects/nanodegree-datanalytics/project3/wineQualityReds.csv',sep=",")
+library('ggplot2')
+summary(wineData)
+```
+
+```{r}
+ggplot(aes(x=quality),data=wineData) + 
+  geom_histogram()
+```
+# Quality Histogram 
+most of the wine are quality of 5 and 6
+```{r}
+ggplot(aes(x=sulphates),data=wineData) +
+  scale_x_log10()+
+  scale_x_continuous(breaks = seq(0,2, by = 0.2)) +
+  geom_histogram(binwidth = .02)
+```
+the sulphates histogram has outliers it shows that there are some wine with more sulphate values
+```{r}
+ggplot(aes(x=residual.sugar),data=wineData) + 
+  scale_x_continuous(breaks=seq(0,10,by=.5))+
+  geom_histogram(binwidth = 1)
+```
+sugar value of wines lies between 1.5 and 2.5 it clearly states that most of wine have less sugary 
+```{r}
+ggplot(aes(x=fixed.acidity),data=wineData)+
+  scale_x_continuous(breaks = seq(0,16,by=1))+
+  geom_histogram()
+```
+acidity of wine is bit skewed right
+```{r}
+ggplot(data=wineData,aes(x=density,y=quality)) +
+  
+  geom_line()
+```
+in the above line plot we can see that there is constant updown of desity so it does not make any sense
+```{r}
+#install.packages("plyr")
+library(plyr)
+quality_desity=ddply(wineData,~quality,summarise,desity=median(density))
+ggplot(quality_desity,aes(x=desity,y=quality))+
+  scale_x_continuous(breaks = seq(0.9,1,0.001))+
+  geom_line() 
+```
+the higly disturbed desity graph is converted into sensable graph by grouping according towards quality
+it also clearly depicts that high quality wine has high density value
+
+```{r}
+#install.packages('corrplot')
+library(corrplot)
+set.seed(1000)
+corrplot(cor(wineData[,seq(2,13)]),method="number")
+```
+```{r}
+```{r}
+ggplot(aes(x=citric.acid,y=fixed.acidity),data=subset(wineData,wineData$citric.acid < 0.75)) +
+  geom_jitter(alpha=1/4) +
+  geom_smooth()
+```
+the above scatter plot clearly shows that citric acid causes the acidity the outlier is also removed for the better understanding
+of data
+
+```{r}
+ggplot(aes(x=pH,y=fixed.acidity),data=subset(wineData,wineData$pH>3.1))+
+  geom_jitter(alpha=1/3) +
+  geom_smooth()
+```
+the above scatter plot clearly shows that lesser ph value have more acidity
+```{r}
+ggplot(wineData,aes(factor(quality),alcohol)) +
+  geom_boxplot()
+```
+the bar plot shows that high quality wine have relatively high alcohol content than lower quality wine
+```{r}
+ggplot(wineData,aes(factor(quality),volatile.acidity)) +
+  geom_boxplot()
+```
+the above clearly states that low quality wine has vinegar taste but when we see quality 7 and 8 there is no significant change
+
+```{r}
+ggplot(wineData,aes(factor(quality),chlorides)) +
+  geom_boxplot()
+```
+most of wine has same level of saltiness except 3 becuase it has a big quadrant 
+```{r}
+ggplot(aes(x=pH,y=volatile.acidity,color=factor(quality)),data=subset(wineData,wineData$citric.acid < 0.75)) +
+  geom_point()
+```
+the above multivariate plot show that quality 5 wine having high acidity when compare to 7 
+```{r}
+wineData$citricCut=cut(wineData$citric.acid,breaks = seq(0,1,by=0.30))
+ggplot(aes(x=pH,y=fixed.acidity,color=factor(citricCut)),data=subset(wineData,wineData$citric.acid < 0.75)) +
+  geom_jitter(alpha=1/3)
+```
+we can see that there is a corelation between acidity and pH value . i  think citric acid is the reason for acidity because lower citric acid has less citric acid and high ph value
+```{r}
+ggplot(aes(total.sulfur.dioxide,free.sulfur.dioxide,color=citricCut),data=wineData) +
+  geom_jitter(alpha=1/3) +
+  facet_grid(~quality)
+```
+the above grid plot clearly shows that quality 5 and 6 has more sulphur and also shows that it has less
+citric acid which leads to less acidiy
+```{r}
+ggplot(aes(x=density,y=fixed.acidity),data=wineData) +
+  geom_dotplot() +
+  facet_grid(~quality)
+```
+the wine quality 5 and 6 has high acidity and wide range of density but 3,4,7,8 has less acidity but 8 has less acidity and density
+```{r}
+ wineData$alcoholCut = cut(wineData$alcohol,breaks = seq(7,15,by=1.5))
+  ggplot(aes(x=density,y=fixed.acidity,color=alcoholCut),data=wineData) +
+  geom_point() +
+  facet_grid(~quality) 
+```
+the above plot show that lesser density has higher alcohol content                                             
+but quality 7 having lesser density abd highr alchol content
+```{r}
+ggplot(aes(x=residual.sugar),data=subset(wineData,wineData$residual.sugar<8)) +
+   geom_histogram()
+```
+most of the wine are less suagary
+```{r}
+ggplot(aes(x=alcohol,y=density),data=wineData) +
+  geom_point() +
+  geom_smooth()
+```
+there is coorelation between density and alcohol hihger the density lower the alcohol content
+```{r}
+library('ggplot2')
+ggplot(aes(x=total.sulfur.dioxide,y=free.sulfur.dioxide),data=wineData) + 
+   geom_jitter(alpha=1/2)
+```
+
+```{r}
+setwd('/home/schoolboy/projects/nanodegree-datanalytics/project4')
+library('ggplot2')
+ggplot(aes(x=total.sulfur.dioxide,y=free.sulfur.dioxide),data=wineData) + 
+   geom_point()
+```
