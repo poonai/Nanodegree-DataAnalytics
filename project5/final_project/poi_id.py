@@ -1,4 +1,3 @@
-#!/usr/bin/python
 
 import sys
 import pickle
@@ -8,15 +7,19 @@ from feature_format import featureFormat, targetFeatureSplit
 from tester import dump_classifier_and_data
 from sklearn.feature_selection import SelectKBest
 from sklearn.feature_selection import chi2
-
+import seaborn as sns
+import matplotlib.pyplot as plt
+import numpy as np
 ### Task 1: Select what features you'll use.
 ### features_list is a list of strings, each of which is a feature name.
 ### The first feature must be "poi".
-features_list = ['poi','salary'] # You will need to use more features
-
+features_list = ['poi','salary']
+# You will need to use more features
 ### Load the dictionary containing the dataset
 with open("final_project_dataset.pkl", "r") as data_file:
     data_dict = pickle.load(data_file)
+
+### Task 2: Remove outliers
 
 my_dataset = data_dict
 
@@ -40,8 +43,8 @@ print len(my_dataset)
 print poi_count
 # feature nan count
 
-### Task 2: Remove outliers
-# removing feature which has NaN value more than 100
+print feature_count_dict
+
 total_feature.remove('deferred_income')
 total_feature.remove('director_fees')
 total_feature.remove('loan_advances')
@@ -49,8 +52,7 @@ total_feature.remove('restricted_stock_deferred')
 total_feature.remove('email_address')
 total_feature.remove('poi')
 
-### Task 3: Create new feature(s)
-
+del my_dataset['TOTAL']
 
 for name in my_dataset:
     if (all([
@@ -64,40 +66,24 @@ for name in my_dataset:
     else:
         my_dataset[name]['from_fraction'] = 0
         my_dataset[name]['to_fraction'] = 0
+
 total_feature.insert(0,'from_fraction')
 total_feature.insert(0,'to_fraction')
 my_features = total_feature
 data = featureFormat(my_dataset, my_features, sort_keys = True)
 
 labels, features = targetFeatureSplit(data)
-### Store to my_dataset for easy export below.
+
 my_features = total_feature
-k_best = SelectKBest(k=5)
+k_best = SelectKBest(k=7)
 k_best.fit(features, labels)
-results_list = zip(k_best.get_support(), my_features[1:])
+results_list = zip(k_best.get_support(), my_features[1:],k_best.scores_)
 best_features = []
 for i in range(0,len(results_list)):
     if results_list[i][0] == True:
         best_features.insert(0,results_list[i][1])
-print best_features
+print results_list
 
-### Task 4: Try a varity of classifiers
-### Please name your classifier clf for easy export below.
-### Note that if you want to do PCA or other multi-stage operations,
-### you'll need to use Pipelines. For more info:
-### http://scikit-learn.org/stable/modules/pipeline.html
-
-# Provided to give you a starting point. Try a variety of classifiers.
-
-
-### Task 5: Tune your classifier to achieve better than .3 precision and recall
-### using our testing script. Check the tester.py script in the final project
-### folder for details on the evaluation method, especially the test_classifier
-### function. Because of the small size of the dataset, the script uses
-### stratified shuffle split cross validation. For more info:
-### http://scikit-learn.org/stable/modules/generated/sklearn.cross_validation.StratifiedShuffleSplit.html
-
-# Example starting point. Try investigating other evaluation techniques!
 data = featureFormat(my_dataset, best_features, sort_keys = True)
 labels, features = targetFeatureSplit(data)
 
@@ -109,7 +95,7 @@ from sklearn.cross_validation import train_test_split
 from sklearn.grid_search import GridSearchCV
 from sklearn import svm
 def evaluate_clf(clf,params,feature,lable):
-    X_train, X_test, y_train, y_test = train_test_split(feature, lable,train_size=.7)
+    X_train, X_test, y_train, y_test = train_test_split(feature, lable)
     clf= GridSearchCV(clf, params)
     clf.fit(X_train, y_train)
     print "best estimator"
@@ -117,20 +103,23 @@ def evaluate_clf(clf,params,feature,lable):
     y_pred = clf.predict(X_test)
     precision = []
     recall = []
-    print classification_report(y_test,y_pred)
-'''    for i in range(0,len(y_test)):
-        #precision.append(precision_score(y_test[i],y_pred[i]))
-        #recall.append(recall_score(y_test[i],y_pred[i]))
-        print precision_score(y_test[i],y_pred[i])
-    print mean(recall)
-    print mean(precision)
- '''
+    #print classification_report(y_test,y_pred)
+    print 'precision score {}'.format(precision_score(y_test,y_pred,average = 'micro'))
+    print 'recall score {}'.format(recall_score(y_test,y_pred,average = 'micro'))
+    #print mean(recall)
+    #print mean(precision)
 best_features.insert(0,'poi')
 #clf.fit()
 lsvc=svm.LinearSVC(penalty='l2')
-evaluate_clf(lsvc,[{'C':[1,10,100]}],features,labels)
+# C parameter is used for how much classification curve has to make
+#evaluate_clf(lsvc,[{'C':[1,10,100]}],features,labels)
 from sklearn.ensemble import RandomForestClassifier
-rforest = RandomForestClassifier(n_estimators = 10)
-evaluate_clf(rforest,[{'min_samples_leaf':[5,10,20]}],features,labels)
-rforest = RandomForestClassifier(n_estimators = 10,min_samples_leaf = 5)
+rforest = RandomForestClassifier(n_estimators = 3,min_samples_leaf = 3)
+logreg = LogisticRegression(tol = 0.001, C = 10**-8, penalty = 'l2', random_state = 42)
+# min samples leaf is used to determine how much sample minimum requrired to go further split
+clf = GaussianNB()
+evaluate_clf(rforest,[{'min_samples_leaf':[3,5,10,13,15],'min_samples_split':[.1,0.2,.5]}],features,labels)
+rforest = RandomForestClassifier(n_estimators = 3,min_samples_leaf = 15, min_samples_split = .2)
+print best_features
+
 dump_classifier_and_data(rforest, my_dataset, best_features)

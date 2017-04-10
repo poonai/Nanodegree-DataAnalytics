@@ -89,12 +89,12 @@ sS'oob_score'
 p39
 I00
 sg22
-I5
+I15
 sS'n_estimators'
 p40
-I10
+I3
 sg23
-I2
+F0.2
 sg24
 Nsg25
 g26
